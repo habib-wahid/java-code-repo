@@ -39,6 +39,6 @@ public class LiskovSubstitution {
         List<EngineVehicle> engineVehicles = new ArrayList<>();
         engineVehicles.add(new Car());
         engineVehicles.add(new MotorCycle());
-        engineVehicles.stream().forEach(engineVehicle -> System.out.println(engineVehicle.hasEngine().to));
+        engineVehicles.stream().forEach(engineVehicle -> System.out.println(engineVehicle.hasEngine()));
     }
 }
