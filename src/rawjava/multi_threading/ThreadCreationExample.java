@@ -1,10 +1,14 @@
 package rawjava.multi_threading;
 
 class MyRunnable implements Runnable {
+
+    private int counter = 0;
     @Override
     public void run() {
-        System.out.println(Thread.currentThread().getName());
-        System.out.println("MyRunnable is running.");
+        for (int i = 0; i < 1_000_000; i++) {
+            counter++;
+        }
+        System.out.println(Thread.currentThread().getName() + ": " + counter);
     }
 }
 
@@ -16,11 +20,12 @@ class MyThread extends Thread {
 
 public class ThreadCreationExample {
     public static void main(String[] args) {
-        System.out.println("Thread is starting " + Thread.currentThread().getName());
-        Thread thread = new Thread(new MyRunnable());
-        thread.start();
+        MyRunnable runnable = new MyRunnable();
+        Thread thread1 = new Thread(runnable);
+        thread1.start();
 
-        MyThread myThread = new MyThread();
-        myThread.start();
+        Thread thread2 = new Thread(runnable);
+        thread2.start();
+
     }
 }
