@@ -31,7 +31,7 @@ public class SynchronizedExample {
     public static void main(String[] args) {
         SharedResource sharedResource = new SharedResource();
         Runnable runnable = () -> {
-            for (int i = 0; i < 5; i++) {
+            for (int i = 0; i < 100000; i++) {
                 sharedResource.synchronizedMethodIncrement();
             }
         };
@@ -42,13 +42,13 @@ public class SynchronizedExample {
         t2.start(); t1.start();
 
         Runnable runnable2 = () -> {
-            for (int i = 0; i < 5; i++) {
+            for (int i = 0; i < 100000; i++) {
                 sharedResource.synchronizedBlockIncrement();
             }
         };
 
         Thread t3 = new Thread(runnable2, "thread-3");
         Thread t4 = new Thread(runnable2, "thread-4");
-        t3.start(); t4.start();
+       // t3.start(); t4.start();
     }
 }
