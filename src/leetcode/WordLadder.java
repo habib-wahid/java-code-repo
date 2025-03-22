@@ -43,6 +43,5 @@ public class WordLadder {
 
         List<Integer> list = List.of(1,2,3,4,5);
 
-        Integer.compare()
     }
 }
