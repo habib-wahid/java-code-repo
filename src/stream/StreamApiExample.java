@@ -3,11 +3,48 @@ package stream;
 import java.util.Arrays;
 import java.util.List;
 
+class Test {
+    Integer t;
+    static int st;
+
+    static {
+        st = 10;
+        System.out.println("Static " + st);
+    }
+
+    Test() {
+        System.out.println("test class");
+    }
+
+    @Override
+    public String toString() {
+        return "Test {t=" + t + ", st=" + st + "}";
+    }
+}
+
 public class StreamApiExample {
 
     public static void main(String[] args) {
         // stream laziness check
-        checkLaziness();
+      //  checkLaziness();
+
+        Test test = new Test();
+        System.out.println(test.t + " " + test);
+
+        int n = 5;
+        boolean b = n % 2 == 0;
+
+        String paymentType = b == true ? "Bank" : "Cash";
+
+//        if (paymentType.equals("Bank")) {
+//            paymentThroughBank();
+//        } else if (paymentType.equals("CreditCard")) {
+//            paymentThroughCard();
+//        } else {
+//            paymentThroughCash();
+//        }
+
+
     }
 
     private static void checkLaziness() {
