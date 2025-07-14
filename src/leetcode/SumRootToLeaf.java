@@ -36,6 +36,12 @@ public class SumRootToLeaf {
         root.right.left = new TreeNode(4);
         root.right.right = new TreeNode(6);
         System.out.println(solution.sol(root));
+
+        String s = "";
+        if (s.isEmpty()) {
+            s = s + "empty";
+            System.out.println( s );
+        }
     }
 }
 
