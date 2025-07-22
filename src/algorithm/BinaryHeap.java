@@ -51,9 +51,8 @@ public class BinaryHeap {
         hT.set(j, hT.get(size - 1));
         hT.remove(size - 1);
 
-        for (int i = hT.size()/2 - 1; i>= 0; i--) {
-            heapify(hT, i);
-        }
+        heapify(hT, 0);
+
     }
 
 
