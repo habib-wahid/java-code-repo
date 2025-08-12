@@ -1,13 +1,10 @@
 package algorithm;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.PriorityQueue;
+import java.util.*;
 
 public class Dijkstra {
 
-    static class DijkstraNode implements Comparable<DijkstraNode> {
+    static class DijkstraNode {
         int vertex;
         int distance;
 
@@ -16,10 +13,10 @@ public class Dijkstra {
             this.distance = distance;
         }
 
-        @Override
-        public int compareTo(DijkstraNode o) {
-            return this.distance - o.distance;
-        }
+//        @Override
+//        public int compareTo(DijkstraNode o) {
+//            return this.distance - o.distance;
+//        }
     }
 
 
@@ -28,7 +25,7 @@ public class Dijkstra {
         int[] distance = new int[n];
         Arrays.fill(distance, Integer.MAX_VALUE);
         distance[0] = 0;
-        PriorityQueue<DijkstraNode> pq = new PriorityQueue<>();
+        PriorityQueue<DijkstraNode> pq = new PriorityQueue<>(Comparator.comparingInt(a -> a.distance));
         pq.add(new DijkstraNode(0,0));
 
         while (!pq.isEmpty()) {
