@@ -15,10 +15,14 @@ public class Trie {
 
     static class TrieNode {
         TrieNode[] children;
+        String word;
         boolean isEnd;
+        int count;
         public TrieNode() {
             children = new TrieNode[26];
             isEnd = false;
+            word = "";
+            count = 0;
         }
     }
 
@@ -62,7 +66,7 @@ public class Trie {
 
     }
 
-    public static List<String> solution1(char[][] board, String[] words) {
+    public static List<String> wordSearch2(char[][] board, String[] words) {
         TrieNode trieNode = new TrieNode();
 
         for (String word : words) {
@@ -75,6 +79,7 @@ public class Trie {
             }
 
             rootNode.isEnd = true;
+            rootNode.word = word;
         }
 
         Set<String> set = new HashSet<>();
@@ -88,7 +93,7 @@ public class Trie {
                 TrieNode node = trieNode;
                 if (node.children[board[i][j] - 'a'] != null) {
                     node = node.children[board[i][j] - 'a'];
-                    dfs(board, node, set, board[i][j] + "", i, j, m, n, -1, -1);
+                    dfs(board, node, set, i, j, m, n, visited);
                 }
             }
         }
@@ -97,10 +102,11 @@ public class Trie {
     }
 
     public static void dfs(char[][] board, TrieNode node,
-                    Set<String> set, String st, int i, int j, int m, int n, int parentI, int parentJ) {
-     //   visited[i][j] = true;
+                    Set<String> set, int i, int j, int m, int n, boolean[][] visited) {
+        visited[i][j] = true;
+
         if (node.isEnd) {
-            set.add(st);
+            set.add(node.word);
         }
 
         int[] dx = {-1, 1, 0, 0};
@@ -110,15 +116,51 @@ public class Trie {
             int x = i + dx[k];
             int y = j + dy[k];
 
-            if (x == parentI && y == parentJ) {
-                continue;
-            }
-            if (x >= 0 && x < m && y >= 0 && y < n && node.children[board[x][y] - 'a'] != null) {
-                dfs(board, node.children[board[x][y] - 'a'], set, st + board[x][y], x, y, m, n, i, j);
+            if (x >= 0 && x < m && y >= 0 && y < n && !visited[x][y] && node.children[board[x][y] - 'a'] != null) {
+                dfs(board, node.children[board[x][y] - 'a'], set, x, y, m, n, visited);
             }
         }
+
+        visited[i][j] = false;
     }
 
+
+    public static List<Integer> contacts(List<List<String>> queries) {
+        int len = queries.size();
+        TrieNode root = new TrieNode();
+        List<Integer> res = new ArrayList<>();
+
+        for (int i = 0; i < len; i++) {
+            String key = queries.get(i).get(0);
+            String value = queries.get(i).get(1);
+            if (key.equals("add")) {
+                TrieNode node = root;
+                for (char c : value.toCharArray()) {
+                    if (node.children[c - 'a'] == null) {
+                        node.children[c - 'a'] = new TrieNode();
+                    }
+                    node = node.children[c - 'a'];
+                    node.count++;
+                }
+                node.isEnd = true;
+            } else if (key.equals("find")) {
+                TrieNode node = root;
+                for (int j = 0; j < value.length(); j++) {
+
+                    if (node.children[value.charAt(j) - 'a'] == null) {
+                        res.add(0);
+                        break;
+                    }
+                    node = node.children[value.charAt(j) - 'a'];
+                    if (j == value.length() - 1) {
+                        res.add(node.count);
+                    }
+                }
+            }
+        }
+
+        return res;
+    }
 
     static void main() {
 
@@ -128,32 +170,19 @@ public class Trie {
                 {'a', 'c', 'k', 'e'},
                 {'a', 'c', 'd', 'n'}
         };
-
-        char[][] board2 = {
-                {'x', 'x'},
-                {'x', 'x'}
-        };
-        String[] words2 = {"xxxxx"};
         String[] words = {"bat","cat","back","backend","stack"};
+    //    System.out.println(wordSearch2(board, words));
 
-        char[][] board3 = {
-                {'o', 'a', 'a', 'n'},
-                {'e', 't', 'a', 'e'},
-                {'i', 'h', 'k', 'r'},
-                {'i', 'f', 'l', 'v'}
-        };
+        List<List<String>> queries = new ArrayList<>();
+        queries.add(new ArrayList<>(List.of("add", "ed")));
+        queries.add(new ArrayList<>(List.of("add", "eddie")));
+        queries.add(new ArrayList<>(List.of("add", "edward")));
+        queries.add(new ArrayList<>(List.of("find", "ed")));
+        queries.add(new ArrayList<>(List.of("add", "edwina")));
+        queries.add(new ArrayList<>(List.of("find", "edw")));
+        queries.add(new ArrayList<>(List.of("find", "a")));
 
-        char[][] board4 = {
-                {'o', 'a', 'a', 'n'},
-                {'e', 't', 'a', 'e'},
-                {'i', 'h', 'k', 'r'},
-                {'i', 'f', 'l', 'v'}
-        };
-
-        String[] words3 = {"oath","pea","eat","rain"};
-        String[] words4 = {"oath","pea","eat","rain","hklf","hf"};
-
-        System.out.println(solution1(board2, words2));
+        System.out.println(contacts(queries));
 
 
     }
