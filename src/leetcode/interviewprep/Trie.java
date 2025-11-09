@@ -113,6 +113,7 @@ public class Trie {
         int[] dy = {0, 0, -1, 1};
 
         for (int k = 0; k < 4; k++) {
+
             int x = i + dx[k];
             int y = j + dy[k];
 
