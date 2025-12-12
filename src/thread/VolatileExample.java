@@ -14,9 +14,12 @@ public class VolatileExample {
 
     public void start() {
        new Thread(() ->  {
+
+           int count = 0;
            while(running) {
-               System.out.println("Running");
+              count++;
            }
+           System.out.println("Thread stopped. Count: " + count);
        }).start();
     }
 
@@ -24,19 +27,17 @@ public class VolatileExample {
         running = false;
     }
 
-    static void main() {
+    static void main() throws InterruptedException {
 
         double a = 0.1;
         double b = 0.2;
-        System.out.println(a + b);
+      //  System.out.println(a + b);
 
-//        VolatileExample ve = new VolatileExample();
-//        ve.start();
-//        try {
-//            Thread.sleep(10000);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-//        ve.stop();
+        VolatileExample ve = new VolatileExample();
+        ve.start();
+        Thread.sleep(3000);
+
+        ve.stop();
+     //   new Thread(ve::stop).start();
     }
 }
