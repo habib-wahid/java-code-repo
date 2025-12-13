@@ -148,23 +148,66 @@ public class DynamicProgramming {
 
     }
 
+    public static String longestPalindromicSubString(String s) {
+        int len = s.length();
+        int maxLen = 1;
+        String result = s.substring(0, 1);
+
+        for (int i = 0; i < len-1; i++) {
+
+            if (i-1 >=0 && s.charAt(i -1) == s.charAt(i + 1)) {
+                int j = i - 1;
+                int k = i + 1;
+
+                while (j >= 0 && k < len && s.charAt(j) == s.charAt(k)) {
+                    j--;
+                    k++;
+                }
+
+                String sub = s.substring(j + 1, k);
+                if (sub.length() > maxLen) {
+                    maxLen = sub.length();
+                    result = sub;
+                }
+            }
+
+            if (s.charAt(i) == s.charAt(i + 1)) {
+                int j = i - 1;
+                int k = i + 2;
+
+                while (j>=0 && k < len && s.charAt(j) == s.charAt(k)) {
+                    j--;
+                    k++;
+                }
+
+                String sub = s.substring(j + 1, k);
+                if (sub.length() > maxLen) {
+                    maxLen = sub.length();
+                    result = sub;
+                }
+            }
+
+        }
+
+        return result;
+    }
+
     static void main() {
         DynamicProgramming dp = new DynamicProgramming();
 
        // int[] nums = new int[] {1,2,1,2,1,1,1};
         //System.out.println(dp.solution(nums));
 
-        String s = "abc";
-        List<String> substrings = findSubString(s);
-        System.out.println(substrings);
+        String s = "bbba";
+        System.out.println(longestPalindromicSubString(s));
 
         StringBuilder sb = new StringBuilder();
         List<String> result = new ArrayList<>();
         findSubStringRec(s, s.length(), 0, sb, result);
-        System.out.println(result);
+       // System.out.println(result);
 
         int[] nums = new int[]{9, 1,2, 1};
 
-        System.out.println(LIS(nums));
+       // System.out.println(LIS(nums));
     }
 }
