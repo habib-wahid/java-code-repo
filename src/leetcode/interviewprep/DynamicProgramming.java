@@ -1,5 +1,6 @@
 package leetcode.interviewprep;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -74,7 +75,7 @@ public class DynamicProgramming {
         return dp[index];
     }
 
-    public int solution(int[] cost) {
+    public int wordBreak(int[] cost) {
         int n = cost.length;
         int[] dp = new int[n];
 
@@ -192,14 +193,108 @@ public class DynamicProgramming {
         return result;
     }
 
+    public static int change(int[] coins, int amount) {
+        int max = amount + 1;
+        int[] dp = new int[amount + 1];
+        Arrays.fill(dp, max);
+        dp[0] = 0;
+
+        for (int currentAmount = 1; currentAmount <= amount; currentAmount++) {
+            for (int coin : coins) {
+                if (currentAmount - coin >= 0) {
+                    dp[currentAmount] = Math.min(dp[currentAmount], 1 + dp[currentAmount - coin]);
+                }
+            }
+        }
+
+        return dp[amount] == max ? -1 : dp[amount];
+    }
+
+    public static int path(int m, int n) {
+        int[][] dp = new int[m][n];
+        for (int i = 0; i < m; i++)
+            dp[i][0] = 1;
+        for (int j = 0; j < n; j++)
+            dp[0][j] = 1;
+
+        for (int i = 1; i < m; i++) {
+            for (int j = 1; j < n; j++) {
+                dp[i][j] = dp[i - 1][j] + dp[i][j - 1];
+            }
+        }
+
+        return dp[m - 1][n -1];
+    }
+
+    public static int countWays(String s) {
+        if (s.startsWith("0")) return 0;
+        int len = s.length();
+
+        int res = 1;
+        for (int i = 1; i < len; i++) {
+            if (i + 1 < len && s.charAt(i + 1) == '0')
+                continue;
+
+            String st = s.substring(i - 1, i + 1);
+            int val = Integer.parseInt(st);
+
+
+            if (s.charAt(i) == '0') {
+                if (val <= 0 || val > 26) return 0;
+            }
+            else {
+                if (val > 9 && val <= 26)
+                    res++;
+            }
+
+        }
+
+        return res;
+
+    }
+
+    public static boolean wordBreak(String s, List<String> dict) {
+        ArrayDeque<Integer> queue = new ArrayDeque<>();
+        boolean[] visited = new boolean[s.length()];
+
+        queue.offer(0);
+
+        while (!queue.isEmpty()) {
+            int idx = queue.poll();
+
+            if (idx >= s.length())
+                return true;
+
+            if (!visited[idx]) {
+                for (String word : dict) {
+                    if (s.startsWith(word, idx)) {
+                        queue.offer(idx + word.length());
+                    }
+                }
+            }
+
+            visited[idx] = true;
+        }
+
+        return false;
+    }
+
+
     static void main() {
         DynamicProgramming dp = new DynamicProgramming();
 
        // int[] nums = new int[] {1,2,1,2,1,1,1};
         //System.out.println(dp.solution(nums));
 
+        int[] coins = new int[] {5,10};
+        int amount = 16;
+
+       // System.out.println(countWays("2101"));
+       // change(coins, amount);
+
+
         String s = "bbba";
-        System.out.println(longestPalindromicSubString(s));
+       // System.out.println(longestPalindromicSubString(s));
 
         StringBuilder sb = new StringBuilder();
         List<String> result = new ArrayList<>();
@@ -209,5 +304,7 @@ public class DynamicProgramming {
         int[] nums = new int[]{9, 1,2, 1};
 
        // System.out.println(LIS(nums));
+
+        System.out.println(wordBreak("aaaaaa", Arrays.asList("a","aa","aaa")));
     }
 }
