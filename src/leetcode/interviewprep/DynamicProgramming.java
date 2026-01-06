@@ -279,12 +279,55 @@ public class DynamicProgramming {
         return false;
     }
 
+    public static int maxiMumProduct(int[] nums) {
+        int globalMax = nums[0];
+        int currentMax = nums[0];
+        int currentMin = nums[0];
+
+        for (int i = 1; i < nums.length; i++) {
+            int tempMax = Math.max(nums[i], Math.max(currentMax * nums[i], currentMin * nums[i]));
+            currentMin = Math.min(nums[i], Math.min(currentMax * nums[i], currentMin * nums[i]));
+            currentMax = tempMax;
+
+            globalMax = Math.max(globalMax, currentMax);
+        }
+
+        return globalMax;
+
+    }
+
+    public static int editDistance(String word1, String word2) {
+        int m = word1.length();
+        int n = word2.length();
+        int[][] dp = new int[m + 1][n + 1];
+
+        for (int i = 0; i <=m ; i++) {
+            dp[i][0] = i;
+        }
+
+        for (int j = 0; j <= n; j++) {
+            dp[0][j] = j;
+        }
+
+        for (int i = 1; i <= m; i++) {
+            for (int j = 1; j <=n; j++) {
+                if (word1.charAt(i - 1) == word2.charAt(j - 1)) {
+                    dp[i][j] = dp[i - 1][j - 1];
+                }
+                else {
+                    dp[i][j] = 1 + Math.min(dp[i - 1][j], Math.min(dp[i][j - 1], dp[i - 1][j - 1]));
+                }
+            }
+        }
+
+        return dp[m][n];
+    }
 
     static void main() {
         DynamicProgramming dp = new DynamicProgramming();
 
-       // int[] nums = new int[] {1,2,1,2,1,1,1};
-        //System.out.println(dp.solution(nums));
+        int[] nums = new int[] {-3, -4, -2};
+      //  System.out.println(maxiMumProduct(nums));
 
         int[] coins = new int[] {5,10};
         int amount = 16;
@@ -301,10 +344,12 @@ public class DynamicProgramming {
         findSubStringRec(s, s.length(), 0, sb, result);
        // System.out.println(result);
 
-        int[] nums = new int[]{9, 1,2, 1};
+       // int[] nums = new int[]{9, 1,2, 1};
 
        // System.out.println(LIS(nums));
 
-        System.out.println(wordBreak("aaaaaa", Arrays.asList("a","aa","aaa")));
+      //  System.out.println(wordBreak("aaaaaa", Arrays.asList("a","aa","aaa")));
+
+        System.out.println(editDistance("a", "b"));
     }
 }
