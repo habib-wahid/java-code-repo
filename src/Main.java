@@ -1,22 +1,22 @@
 import java.math.BigDecimal;
+import java.util.function.Function;
+import java.util.function.Supplier;
+
+class TestFunction implements Function<Integer, BigDecimal> {
+    @Override
+    public BigDecimal apply(Integer t) {
+        return BigDecimal.valueOf(t * 2);
+    }
+}
+
+
+
 
 public class Main {
     static void main(String[] args) {
-        System.out.println(testFinally());
+        Supplier<String> supplier = () -> "Hello";
+        System.out.println(supplier.get());
     }
 
-
-    public static int testFinally() {
-        try {
-            System.out.println("Try block");
-            return 1;
-        } catch (Exception e) {
-            System.out.println("Catch block");
-            return 2;
-        } finally {
-            System.out.println("Finally block executes before return!");
-            return 3;
-        }
-    }
 
 }

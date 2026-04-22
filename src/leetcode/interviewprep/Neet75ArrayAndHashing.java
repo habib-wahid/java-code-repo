@@ -1,5 +1,6 @@
 package leetcode.interviewprep;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -12,6 +13,8 @@ import java.util.Set;
 
 public class Neet75ArrayAndHashing {
 
+    public int instanceValue = 0;
+
     public static class Pair {
         int x;
         int y;
@@ -20,55 +23,71 @@ public class Neet75ArrayAndHashing {
             this.y = y;
         }
     }
-    public static boolean solution(int[] nums) {
-        int len = nums.length;
-        Map<Integer, Integer> map = new HashMap<>();
-        map.put(nums[0], map.getOrDefault(nums[0], 0) + 1);
-        int[] array = new int[len];
-        ArrayList<Integer>[] list = new ArrayList[len];
-        ArrayList<Integer> list1 = new ArrayList<>();
+    public static boolean solution(int[][] matrix, int target) {
+        int m = matrix.length;
+        int n = matrix[0].length;
 
-        if (list[0] == null) {
-            list[0] = new ArrayList<>();
+        if (target == matrix[0][0])
+            return true;
+
+        if (target < matrix[0][0])
+            return false;
+
+        int sr = 0, er = m - 1;
+
+        while (sr <= er) {
+            int mid = (sr + er) / 2;
+
+            if (target >= matrix[mid][0] && target <= matrix[mid][n-1] ) {
+                int left = 0, right = n - 1;
+
+
+                while (left <= right) {
+
+                    if (left == right) {
+                        if (target == matrix[mid][left]) {
+                            return true;
+                        } else {
+                            return false;
+                        }
+                    }
+                    int mi = (left + right)/2;
+                    if (target == matrix[mid][mi]) {
+                        return true;
+                    } else if (target < matrix[mid][mi]) {
+                        right = mi - 1;
+                    } else {
+                        left = mi + 1;
+                    }
+                }
+                return false;
+            } else if (target < matrix[mid][0]) {
+                er = mid - 1;
+            } else {
+                sr = mid + 1;
+            }
         }
 
-        list1.addAll(list[0]);
-        int[] arr = list1.subList(0, 1).stream().mapToInt(Integer::intValue).toArray();
-
-
-
-        for (int key : map.keySet()) {
-            int val = map.get(key);
-        }
-
-        Set<Integer> set = new HashSet<>();
-        set.add(nums[1]);
-        set.remove(nums[2]);
-        set.add(nums[0]);
-        set.contains(nums[0]);
-        String s = "sfsdfsd";
-        Map<Integer, Integer> map1 = new HashMap<>();
-
-        PriorityQueue<Pair> queue = new PriorityQueue<>((pai1, pai2) -> (pai2.y - pai1.y));
-        queue.offer(new Pair(nums[0], 2));
-        queue.offer(new Pair(nums[1], 1));
-
-        List<String> stringList = new ArrayList<>();
-        stringList.add("hello");
-        stringList.add("world");
-
-        StringBuilder sb = new StringBuilder();
-        sb.append(stringList.get(0));
-        sb.append(stringList.get(1));
-
-        return true;
+        return false;
 
     }
 
     static void main() {
-        List<String> strs = Arrays.asList("hello", "world");
 
-        String[] s = {"a", "b", "c"};
-        Arrays.stream(s).filter(str -> !str.equals("emptyString")).toList()
+       //  1  3   5  7
+       //  10 11  16 20
+       //  23 30  34 60
+
+       int[][] matrix = {{1,3,5,7},{10,11,16,20},{23,30,34,60}};
+       int target = 13;
+       System.out.println(solution(matrix, target));
+
+
+        String text = """
+                This is a multi-line string in Java 15 and above. It preserves the formatting and can contain "quotes" without needing to escape them.
+                """;
+    //    System.out.println(text);
+
+
     }
 }
