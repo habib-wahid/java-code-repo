@@ -4,6 +4,7 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -209,14 +210,224 @@ public class Neet75ArrayAndHashing {
         return res;
     }
 
-    static void main() {
-        List<String> sts = new ArrayList<>();
-        sts.add("");
-        System.out.println(solutionDn(solutionEn(sts)));
+    public static List<List<Integer>> soluitons(int[] nums) {
+        Arrays.sort(nums);
+        int len = nums.length;
+        List<List<Integer>> res = new ArrayList<>();
 
-        String st = "kabsa";
-        char[] chs = st.toCharArray();
-        Arrays.sort(chs);
-        System.out.println("Sorted String " + new String(chs));
+        for (int i = 0; i < len - 2; i++) {
+            if (i > 0 && nums[i] == nums[i - 1])
+                continue;
+
+            int j = i + 1;
+            int k = len - 1;
+
+            while (j < k) {
+                int sum = nums[i] + nums[j] + nums[k];
+
+                if (sum == 0) {
+                    res.add(List.of(nums[i], nums[j], nums[k]));
+                    j++;
+                    k--;
+                } else if (sum < 0) {
+                    j++;
+                } else {
+                    k--;
+                }
+            }
+        }
+
+        return res;
+    }
+
+    public static boolean solution(String s1, String s2) {
+        int len1 = s1.length();
+        int len2 = s2.length();
+
+        if (len1 > len2)
+            return false;
+
+        int[] arr = new int[26];
+        int[] arr1 = new int[26];
+
+        for (int i = 0; i < len1; i++) {
+            arr[s1.charAt(i) - 'a']++;
+        }
+
+        StringBuilder sb = new StringBuilder(s2.substring(0, len1));
+
+        for (int i = 0; i < sb.length(); i++) {
+            arr1[sb.charAt(i) - 'a']++;
+        }
+
+        int i = len1 - 1;
+
+        while (i < len2) {
+            if (i >= len1) {
+                arr1[sb.charAt(0) - 'a']--;
+                sb.deleteCharAt(0);
+                sb.append(s2.charAt(i));
+                arr1[s2.charAt(i) - 'a']++;
+
+            }
+
+            int j = 0;
+            while (j < 26) {
+                if (arr[j] != arr1[j]) {
+                    break;
+                }
+                j++;
+            }
+
+            if (j == 26)
+                return true;
+
+            i++;
+        }
+
+        return false;
+
+    }
+
+    private static String minWindow(String s, String t) {
+        String os = s;
+        s = s.toLowerCase();
+        t = t.toLowerCase();
+
+        int sLen = s.length();
+        int tLen = t.length();
+
+        if (sLen < tLen)
+            return "";
+
+        int[] tArr = new int[26];
+        int[] sArr = new int[26];
+
+        for (int i = 0; i < tLen; i++) {
+            tArr[t.charAt(i) - 'a']++;
+        }
+
+        int i = 0;
+        int j = 0;
+        int min = Integer.MAX_VALUE;
+        int left = 0;
+        int right = s.length() + 1;
+        String res = s;
+
+        while (i <= j && j < sLen) {
+
+            System.out.println("j i " + j + " " + i);
+
+            sArr[s.charAt(j) - 'a']++;
+
+            boolean flag = true;
+
+            for (int k = 0; k < 26; k++) {
+                if (sArr[k] < tArr[k]) {
+                    flag = false;
+                    break;
+                }
+            }
+
+            if (flag) {
+                min = Math.min(min, j - i + 1);
+                if (min < right - left + 1) {
+                    left = i;
+                    right = j;
+                }
+
+                boolean check = true;
+                while (check) {
+
+                    sArr[s.charAt(i) - 'a']--;
+                    i++;
+
+                    System.out.println("i j " + i + " " + j);
+
+                    for (int k = 0; k < 26; k++) {
+                        if (sArr[k] < tArr[k]) {
+                            check = false;
+                            break;
+                        }
+                    }
+
+                    System.out.println("hello");
+                    if (!check)
+                        break;
+
+                    min = Math.min(min, j - i + 1);
+
+                    if (min < right - left + 1) {
+                        left = i;
+                        right = j;
+                    }
+
+                }
+
+                System.out.println("hello again " + i);
+
+            }
+
+            j++;
+        }
+
+        if (right == s.length() + 1)
+            return "";
+        return os.substring(left, right + 1);
+
+    }
+
+    static class Pair1 {
+        int x;
+        int y;
+        public Pair1(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+    }
+
+    static void main() {
+
+        System.out.println(Math.ceilDiv(5, 2));
+        String[] strs = {"eat", "tea", "tan", "ate", "nat", "bat"};
+        int len = strs.length;
+        if (strs[0].equals("eat0") || strs[0].equals("tea0") || strs[0].equals("ate0")) {
+
+        }
+        Deque<Integer> dq = new ArrayDeque<>();
+        String s = "ADOBECODEBANC";
+        String t = "ABC";
+
+       // System.out.println("HRE " + minWindow(s, t));
+
+        String st = "56";
+
+        class Pair {
+            int x;
+            int y;
+
+            Pair(int x, int y) {
+                this.x = x;
+                this.y = y;
+            }
+        }
+
+
+        Pair[] p = {new Pair(4,2), new Pair(3,4)};
+        Arrays.sort(p, Comparator.comparingInt(p1 -> p1.x));
+        System.out.println(p[0].x);
+
+      //  System.out.println(Integer.parseInt(st) + 20);
+
+        // System.out.println(solution("abc", "lecabee"));
+
+        // zxyyzz
+
+        // k = 3
+
+        // A -> 4 B -> 3
+
+        // AAABA BB BBBBBBBBB
+
     }
 }

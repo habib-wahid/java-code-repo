@@ -1,34 +1,39 @@
 package leetcode.interviewprep;
 
-import java.util.*;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.PriorityQueue;
+import java.util.Queue;
+import java.util.Stack;
 
 public class GraphAlgo {
 
-    static class WeightedPair {
-        int vertex;
+    static class GraphPair {
+        int node;
         int weight;
-
-        public WeightedPair(int vertex, int weight) {
-            this.vertex = vertex;
+        public GraphPair(int node, int weight) {
+            this.node = node;
             this.weight = weight;
         }
     }
 
-    public static List<WeightedPair>[] buildWeightedGraph(int V) {
-        List<WeightedPair>[] graph = new ArrayList[V];
+    public static List<Integer>[] createGraph(int V) {
+        List<Integer>[] graph = new ArrayList[V];
         for (int i = 0; i < V; i++) {
             graph[i] = new ArrayList<>();
         }
-
         return graph;
     }
 
-    public static List<Integer>[] buildGraph(int V) {
-        List<Integer>[] graph = new ArrayList[V];
+    public static List<GraphPair>[] createWeightedGraph(int V) {
+        List<GraphPair>[] graph = new ArrayList[V];
         for (int i = 0; i < V; i++) {
-           graph[i] = new ArrayList<>();
+            graph[i] = new ArrayList<>();
         }
-
         return graph;
     }
 
@@ -37,160 +42,244 @@ public class GraphAlgo {
         graph[v].add(u);
     }
 
+    public static void addWeightedEdge(List<GraphPair>[] graph, int u, int v, int weight) {
+        graph[u].add(new GraphPair(v, weight));
+        graph[v].add(new GraphPair(u, weight));
+    }
+
     public static void addDirectedEdge(List<Integer>[] graph, int u, int v) {
         graph[u].add(v);
     }
 
-    public static void addWeightedEdge(List<WeightedPair>[] graph, int u, int v, int weight) {
-        graph[u].add(new WeightedPair(v, weight));
-        graph[v].add(new WeightedPair(u, weight));
-    }
+    public static void bfsTraversal(List<Integer>[] graph, int s) {
+        Queue<Integer> q = new LinkedList<>();
+        int[] visited = new int[graph.length];
 
-    //Time Complexity -> O(V + E)
-    // Space Compexity -> O(V)
+        q.offer(s);
+        visited[s] = 1;
 
-    public void bfs(List<Integer>[] graph) {
-        int V = graph.length;
-        boolean[] visited = new boolean[V];
-        Deque<Integer> queue = new ArrayDeque<>();
+        System.out.println("Printing BFS Traversal Nodes of a graph: -----------------------");
+        while (!q.isEmpty()) {
+            int u = q.poll();
+            System.out.println("Visited: " + u);
 
-        visited[0] = true;
-        queue.offer(0);
-
-
-        while (!queue.isEmpty()) {
-            int v = queue.poll();
-            System.out.println("Vertex " + v);
-
-            for (int u : graph[v]) {
-                if (!visited[u]) {
-                    visited[u] = true;
-                    queue.offer(u);
+            for (int v : graph[u]) {     // here complexity is total edges
+                if (visited[v] == 0) {
+                    q.offer(v);
+                    visited[v] = 1;      // here complexity is total nodes
                 }
             }
         }
+        System.out.println("---------------------------------------------------------------------");
+        System.out.println("Total Runtime complexity becomes: O(V+E)");
+        System.out.println("Total Space complexity becomes: O(V)");
     }
 
-    //Time Complexity -> O(V+E)
-    //Space Complexity -> O(V) + Recursive stack
-    public void dfs(List<Integer>[] graph) {
-        int V = graph.length;
-        boolean[] visited = new boolean[V];
-        dfs(graph, 0, visited);
 
+    public static void dfsTraversal(List<Integer>[] graph, int s) {
+        int[] visited = new int[graph.length];
+        System.out.println("Printing DFS Traversal Nodes of a graph: -----------------------");
+        dfs(graph, s, visited);
+        System.out.println("---------------------------------------------------------------------");
+        System.out.println("Total Runtime complexity becomes: O(V+E)");
+        System.out.println("Total Space complexity becomes: O(V)");
     }
 
-    public void dfs(List<Integer>[] graph,int currentV, boolean[] visited) {
-        visited[currentV] = true;
-        System.out.println("Vertex " + currentV);
-        for (int u : graph[currentV]) {
-            if (!visited[u]) {
-                dfs(graph, u, visited);
+    public static void dfs(List<Integer>[] graph, int s, int[] visited) {
+        visited[s] = 1;
+        System.out.println("Visited: " + s);
+
+
+        for (int v : graph[s]) {    // here complexity is total edges
+            if (visited[v] == 0) {
+                dfs(graph, v, visited);  //here complexity is total nodes
             }
         }
+
+    }
+
+    public static boolean detectCycle(List<Integer>[] graph) {
+        System.out.println("Detecting Cycle in a directed graph using DFS: -----------------------");
+        int[] nodeState = new int[graph.length];
+
+        for (int i = 0; i < graph.length; i++) {
+            if (nodeState[i] == 0) {
+                if (cycle(graph, i, nodeState)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public static boolean cycle(List<Integer>[] graph, int s, int[] nodeState) {
+        if (nodeState[s] == 1)
+            return true;
+        if (nodeState[s] == 2)
+            return false;
+
+        nodeState[s] = 1;
+        System.out.println("Visited: " + s);
+
+        for (int v : graph[s]) {
+            if (cycle(graph, v, nodeState)) {
+                return true;
+            }
+        }
+
+        nodeState[s] = 2;
+        return false;
     }
 
 
-    public int[] shortestPath(List<WeightedPair>[] graph) {
-        int V = graph.length;
-        int[] distance = new int[V];
-        for (int i = 0; i < V; i++) {
-            distance[i] = Integer.MAX_VALUE;
-        }
-        PriorityQueue<WeightedPair> pq = new PriorityQueue<>(Comparator.comparingInt(o -> o.weight));
-        distance[0] = 0;
-        pq.offer(new WeightedPair(0, 0));
 
-        while (!pq.isEmpty()) {
-            WeightedPair curr = pq.poll();
-            int currentv = curr.vertex;
-            int currentweight = curr.weight;
+    public static int[] diajkstra(List<GraphPair>[] graph, int s) {
+        int[] dist = new int[graph.length];
+        Arrays.fill(dist, Integer.MAX_VALUE);
+        dist[s] = 0;
 
-            if (distance[currentv] < currentweight) {
+        Queue<GraphPair> pq = new PriorityQueue<>(Comparator.comparingInt(a -> a.weight));
+        pq.add(new GraphPair(s, 0));
+
+        while(!pq.isEmpty()) {
+            GraphPair current = pq.poll();  // here complexity is total nodes poll which is 0(logV)
+            int u = current.node;
+            int currentDistance = current.weight;
+
+            if (currentDistance > dist[u]) {
                 continue;
             }
+            System.out.println("Visited: " + u);
 
-            for (WeightedPair neighbour : graph[currentv]) {
-                if (distance[neighbour.vertex] > currentweight + neighbour.weight) {
-                    distance[neighbour.vertex] = currentweight + neighbour.weight;
-                    pq.offer(new WeightedPair(neighbour.vertex, distance[neighbour.vertex]));
+            for (GraphPair v : graph[u]) {  // here complexity is total edges
+                if (currentDistance + v.weight < dist[v.node]) {
+                    dist[v.node] = currentDistance + v.weight;
+                    pq.add(new GraphPair(v.node, dist[v.node]));    // here complexity is total nodes insert which is 0(logV)
                 }
             }
         }
 
-        return distance;
+        return dist;
     }
 
-    public void topSort(List<Integer>[] graph) {
-        int V = graph.length;
-        boolean[] visited = new boolean[V];
-        ArrayDeque<Integer> deque = new ArrayDeque<>();
-        for (int i = 0; i < V; i++) {
-            if (!visited[i]) {
-                topSortDfs(graph, i, visited, deque);
+
+    public static int[] topologicalSortBFS(List<Integer>[] graph) {
+        List<Integer> res = new ArrayList<>();
+        int[] degree = new int[graph.length];
+        Queue<Integer> queue = new LinkedList<>();
+
+        for (int i = 0; i < graph.length; i++) {  // here complexity is total nodes
+            for (int v : graph[i]) {
+                degree[v]++;
             }
         }
 
-        System.out.println("Top Sort ");
-        while (!deque.isEmpty()) {
-            int v = deque.pollLast();
-            System.out.println("Vertex " + v);
-        }
-    }
-
-    public void topSortDfs(List<Integer>[] graph,int currentV, boolean[] visited, ArrayDeque<Integer> deque) {
-        visited[currentV] = true;
-        System.out.println("Vertex " + currentV);
-        for (int u : graph[currentV]) {
-            if (!visited[u]) {
-                topSortDfs(graph, u, visited, deque);
+        for (int i = 0; i < graph.length; i++) {  // here complexity is total nodes
+            if (degree[i] == 0) {
+                queue.add(i);
             }
         }
 
-        deque.offer(currentV);
+        while (!queue.isEmpty()) {
+            int u = queue.poll();
+            res.add(u);
+
+            for (int v : graph[u]) {   // here complexity is total edges
+                degree[v]--;
+                if (degree[v] == 0) {
+                    queue.add(v);
+                }
+            }
+        }
+
+        return res.stream().mapToInt(i -> i).toArray();
     }
 
+    public static int[] topSortDfs(List<Integer>[] graph) {
+        int [] visited = new int[graph.length];
+        Stack<Integer> stack = new Stack<>();
 
-    public static void main(String[] args) {
-        GraphAlgo g = new GraphAlgo();
 
-        // Graph for Bfs and Dfs
-        List<Integer>[] graph = buildGraph(5);
+        for (int i = 0; i < graph.length; i++) {
+            if (visited[i] == 0) {
+                topSort(graph, i, visited, stack);
+            }
+        }
+
+        int[] result = new int[stack.size()];
+        for (int i = 0; i < graph.length; i++) {
+            result[i] = stack.pop();
+        }
+
+        return result;
+    }
+
+    public static void topSort(List<Integer>[] graph, int s, int[] visited, Stack<Integer> stack) {
+        visited[s] = 1;
+
+        for (int v : graph[s]) {
+            if (visited[v] == 0) {
+                topSort(graph, v, visited, stack);
+            }
+        }
+
+        stack.push(s);
+    }
+
+    static void main(String[] args) {
+        System.out.println("Hello from GraphAlgo");
+
+        //Graph Traversal Algorithms
+        List<Integer>[] graph = createGraph(5);
         addEdge(graph, 0, 1);
+        addEdge(graph, 0, 2);
         addEdge(graph, 1, 2);
         addEdge(graph, 2, 3);
-        addEdge(graph, 0, 4);
-        addEdge(graph, 3, 4);
-        g.dfs(graph);
+        addEdge(graph, 2, 4);
 
+        bfsTraversal(graph, 0);
+        dfsTraversal(graph, 0);
 
-        // Graph for Dijkstra
+        //Graph Cycle Detection Algorithms
+        List<Integer>[] cGraph = createGraph(4);
+        addDirectedEdge(cGraph, 0, 1);
+        addDirectedEdge(cGraph, 1, 2);
+        addDirectedEdge(cGraph, 2, 3);
+       // addDirectedEdge(cGraph, 2, 0);
+        System.out.println("Cycle exists: " + detectCycle(cGraph));
 
-        List<WeightedPair>[] weightedGraph = buildWeightedGraph(5);
-        addWeightedEdge(weightedGraph, 0, 1, 2);
-        addWeightedEdge(weightedGraph, 0, 2, 3);
-        addWeightedEdge(weightedGraph, 1, 3, 5);
+        // Dijkstra's Algorithm
+
+        List<GraphPair>[] weightedGraph = createWeightedGraph(5);
+        addWeightedEdge(weightedGraph, 0, 1, 4);
+        addWeightedEdge(weightedGraph, 0, 2, 8);
+        addWeightedEdge(weightedGraph, 1, 2, 3);
+        addWeightedEdge(weightedGraph, 1, 4, 6);
         addWeightedEdge(weightedGraph, 2, 3, 2);
-        addWeightedEdge(weightedGraph, 1, 4, 2);
+        addWeightedEdge(weightedGraph, 3, 4, 10);
 
-        int[] distances = g.shortestPath(weightedGraph);
 
-        for (int i = 0; i < distances.length; i++) {
-            System.out.println(i + " " + distances[i]);
-        }
+        int[] distances = diajkstra(weightedGraph, 0);
+        System.out.println("Shortest distances from node 0: " + Arrays.toString(distances));
+        System.out.println("Total Runtime complexity becomes: O((V+E)logV)");
+        System.out.println("Total Space complexity becomes: O(V)");
 
-        // Top Sort
+        // Topological Sorting
+        List<Integer>[] tGraph = createGraph(6);
+        addDirectedEdge(tGraph, 0, 1);
+        addDirectedEdge(tGraph, 1, 2);
+        addDirectedEdge(tGraph, 2, 3);
+        addDirectedEdge(tGraph, 4, 5);
+        addDirectedEdge(tGraph, 5, 1);
+        addDirectedEdge(tGraph, 5, 2);
 
-        List<Integer>[] topSortGraph = buildGraph(7);
-        addDirectedEdge(topSortGraph, 0, 1);
-        addDirectedEdge(topSortGraph, 0, 2);
-        addDirectedEdge(topSortGraph, 2, 3);
-        addDirectedEdge(topSortGraph, 1, 4);
-        addDirectedEdge(topSortGraph, 4, 5);
-        addDirectedEdge(topSortGraph, 5, 6);
-        g.topSort(topSortGraph);
+        int[] topologicalOrder = topologicalSortBFS(tGraph);
+        System.out.println("Topological Order: " + Arrays.toString(topologicalOrder));
+        System.out.println("Total Runtime complexity becomes: O(V+E)");
+        System.out.println("Total Space complexity becomes: O(V)");
 
-       // char[][] ch = new char[5][5];
+        int[] topologicalOrder1 = topSortDfs(tGraph);
+        System.out.println("Topological Order: " + Arrays.toString(topologicalOrder1));
 
     }
 }
